@@ -10,17 +10,22 @@ addToDoButton.addEventListener("click", function () {
     const todoText = inputText.value.trim(); //! trim komutuyla input verilerimde ki boşlukları temizliyorum.
     
     if (todoText !== "") { //! if metoduyla, boş girilen input verilerini engelliyorum."Eğer input boş değilse" devam eder.
-        
-        const todoData = localStorage.getItem("todoData") ? JSON.parse(localStorage.getItem("todoData")) : []; 
+
+        let todoData = localStorage.getItem("todoData") ? JSON.parse(localStorage.getItem("todoData")) : []; 
         //! localStorage'dan "todoData" adlı anahtarla kaydedilmiş veriyi çek, eğer veri yoksa boş bir dizi oluştur. Eğer boş bir dizi oluşturmasaydık değer "null" dönerdi ve JSON.parse komutuna null değeri verirsek hata alırdık. 
 
-        todoData.push(todoText); //! Yeni girilen todo verilerini, "todoData" dizinine eklliyorum.
+        const newTodo = {
+            title: todoText,
+            createdAt: new Date().toLocaleString(),
+            updateAt: new Date().toLocaleString()
+        };
+
+        todoData.push(newTodo); //! Yeni girilen todo verilerini, "todoData" dizinine eklliyorum.
 
         localStorage.setItem("todoData", JSON.stringify(todoData)); 
         //! todoData dizisini JSON formatına çevirip localStorage'a kaydediyorum. Stringify komutu, verileri JSON string ifadesine çevirir.
 
-    addTodoToList(todoText); //! Yeni todoları listeye ekliyorum.
-
+    addTodoToList(newTodo); //! Yeni todoları listeye ekliyorum.
     inputText.value = ""; //! İşlemlerin sonunda inputtaki yazıyı sıfırlıyorum.
 }
 });
@@ -36,7 +41,7 @@ if (showTodos) { //! Eğer "todoData" verisi localStorage'da varsa
 }
 
 //! Yeni todo'lar eklemek için kullandığım fonksiyon.
-function addTodoToList(todoText) { 
+function addTodoToList(todo) { 
   let container = document.createElement("div"); //! Bu komutla yeni öğeler oluşturuyorum.
   let paragraph = document.createElement("p");
   let checkbox = document.createElement("input");
@@ -52,7 +57,7 @@ function addTodoToList(todoText) {
   container.style.display = "flex";
   container.style.justifyContent = "center";
 
-  paragraph.innerHTML = todoText; //! Paragraph içerisine todoText'den gelen değerleri aktarıyorum.
+  paragraph.innerHTML = todo.title; //! Paragraph içerisine todoText'den gelen değerleri aktarıyorum.
 
   checkbox.addEventListener("click", function () { //! Checkbox'a tıklandığında metnin üzerini çiziyorum.
     paragraph.style.textDecoration = checkbox.checked ? "line-through" : "none";
